@@ -13,7 +13,7 @@ module Spree::PostsHelper
         Spree.t(:posts_year) % year.to_s
       end
     else
-      Spree::Config.blog_title || Spree.t(:blog)
+      Spree::Config.blog_title.blank? ? Spree.t(:blog) : Spree::Config.blog_title
     end
   end
 end

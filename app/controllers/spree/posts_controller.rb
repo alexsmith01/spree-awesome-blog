@@ -12,7 +12,7 @@ class Spree::PostsController < Spree::StoreController
     @posts = @posts.tagged_with(@tag) if @tag
 
     respond_to do |format|
-      format.html { @posts = @posts.paginate(page: params[:page], per_page: 10) }
+      format.html { @posts = @posts.page(params[:page]) }
       format.rss
     end
   end

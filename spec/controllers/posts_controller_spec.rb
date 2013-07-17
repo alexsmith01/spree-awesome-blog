@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Spree::PostsController do
+  let(:user) { create(:user, persistence_token: "foo", email: "user@example.com") }
+
+  before do
+    controller.stub(spree_current_user: nil)
+  end
   context "#show" do
     it "is success" do
       spree_get :show, id: "test"
@@ -8,7 +13,7 @@ describe Spree::PostsController do
     end
 
     it "assign post" do
-      published = mock(:published)
+      published = double(:published)
       Spree::Post.should_receive(:published).and_return(published)
       published.should_receive(:find_by_permalink).with("test").and_return(:post)
       spree_get :show, id: "test"
@@ -35,9 +40,9 @@ describe Spree::PostsController do
     end
 
     it "assign posts" do
-      published = mock(:published)
+      published = double(:published)
       Spree::Post.should_receive(:published).and_return(published)
-      published.should_receive(:paginate).with(page: 2, per_page: 10).and_return(:posts)
+      published.should_receive(:page).with("2").and_return(:posts)
       spree_get :index, page: 2
       assigns(:posts).should eql(:posts)
     end
@@ -62,7 +67,7 @@ describe Spree::PostsController do
     end
 
     it "assign posts" do
-      Post.should_receive(:published).and_return(:posts)
+      Spree::Post.should_receive(:published).and_return(:posts)
       spree_get :index, format: :rss
       assigns(:posts).should eql(:posts)
     end
@@ -75,10 +80,10 @@ describe Spree::PostsController do
     end
 
     it "assign posts" do
-      published, tagged = mock(:published), mock(:tagged)
+      published, tagged = double(:published), double(:tagged)
       Spree::Post.should_receive(:published).and_return(published)
       published.should_receive(:tagged_with).with("awesome").and_return(tagged)
-      tagged.should_receive(:paginate).with(page: 2, per_page: 10).and_return(:posts)
+      tagged.should_receive(:page).with("2").and_return(:posts)
       spree_get :index, tag: "awesome", page: 2
       assigns(:posts).should eql(:posts)
       assigns(:tag).should eql("awesome")
@@ -92,15 +97,15 @@ describe Spree::PostsController do
     end
 
     it "assign posts" do
-      published, by_date = mock(:published), mock(:by_date)
-      Spree::Post.should_receive(:by_date).with(2010,2,1).and_return(by_date)
+      published, by_date = double(:published), double(:by_date)
+      Spree::Post.should_receive(:by_date).with(2010, 2, 1).and_return(by_date)
       by_date.should_receive(:published).and_return(published)
-      published.should_receive(:paginate).with(page: 2, per_page: 10).and_return(:posts)
+      published.should_receive(:page).with("2").and_return(:posts)
       spree_get :index, year: 2010, month: 2, day: 1, page: 2
       assigns(:posts).should eql(:posts)
-      assigns(:year).should eql(2010)
-      assigns(:month).should eql(2)
-      assigns(:day).should eql(1)
+      assigns(:year).should eql("2010")
+      assigns(:month).should eql("2")
+      assigns(:day).should eql("1")
     end
   end
 end

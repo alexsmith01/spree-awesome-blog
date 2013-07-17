@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe Spree::CommentsController do
-  let(:user) { create(:user, persistence_token: "foo", :has_role? => false, email: "user@example.com") }
+  let(:user) { create(:user, persistence_token: "foo", email: "user@example.com") }
 
   before do
+    controller.stub(spree_current_user: nil)
     @post = mock_model(Spree::Post, to_param: "test-post")
     Spree::Post.should_receive(:find_by_permalink).with("test-post").and_return(@post)
   end
@@ -15,7 +16,7 @@ describe Spree::CommentsController do
     end
 
     it "assign comment" do
-      Comment.should_receive(:new).and_return(:comment)
+      Spree::Comment.should_receive(:new).and_return(:comment)
       spree_get :new, post_id: "test-post"
       assigns(:comment).should eql(:comment)
     end
@@ -28,7 +29,7 @@ describe Spree::CommentsController do
 
   describe "#create" do
     before do
-      @comments, @comment = mock(:comments), mock_model(Spree::Comment)
+      @comments, @comment = double(:comments), mock_model(Spree::Comment)
 
       @post.should_receive(:comments).and_return(@comments)
       @comments.should_receive(:build).with("name" => "test").and_return(@comment)
@@ -47,7 +48,7 @@ describe Spree::CommentsController do
 
         it "redirect to post" do
           spree_post :create, post_id: "test-post", comment: { name: "test" }
-          response.should redirect_to(post_path("test-post"))
+          response.should redirect_to(spree.post_path("test-post"))
         end
 
         it "set flash message" do

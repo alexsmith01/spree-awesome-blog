@@ -1,10 +1,11 @@
 class Spree::Post < ActiveRecord::Base
   make_permalink
   acts_as_taggable
+  paginates_per 10
 
   attr_accessible :title
 
-  has_many :comments, dependent: :destroy, class_name: 'Spree::Comments'
+  has_many :comments, dependent: :destroy, class_name: 'Spree::Comment'
 
   validates :title, presence: true
 
@@ -47,6 +48,6 @@ class Spree::Post < ActiveRecord::Base
 
   def check_published
     return unless publish_changed?
-    self.published_on = publish ? Date.today : nil
+    self.published_on = publish ? Time.now : nil
   end
 end

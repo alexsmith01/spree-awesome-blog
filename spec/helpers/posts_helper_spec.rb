@@ -4,12 +4,12 @@ describe Spree::PostsHelper do
   describe :make_title do
     context "no prameters" do
       it "use blog title if present" do
-        Spree::Config.should_receive(:[]).with(:blog_title).and_return(nil)
+        Spree::Config[:blog_title] = nil
         make_title.should eql(Spree.t(:blog))
       end
 
       it "use blog when no title present" do
-        Spree::Config.should_receive(:[]).with(:blog_title).and_return("this is a test")
+        Spree::Config[:blog_title] = "this is a test"
         make_title.should eql("this is a test")
       end
     end

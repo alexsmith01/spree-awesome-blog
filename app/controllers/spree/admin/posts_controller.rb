@@ -22,6 +22,6 @@ class Spree::Admin::PostsController < Spree::Admin::ResourceController
   private
 
   def collection
-    @collection ||= Spree::Post.paginate(page: params[:page], per_page: 10)
+    @collection ||= Spree::Post.page(params[:page])
   end
 end

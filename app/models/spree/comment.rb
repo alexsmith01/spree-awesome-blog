@@ -28,6 +28,6 @@ class Spree::Comment < ActiveRecord::Base
 
   def check_approved
     return unless approved_changed?
-    self.approved_on = approved ? Date.today : nil
+    self.approved_on = approved ? Time.now : nil
   end
 end

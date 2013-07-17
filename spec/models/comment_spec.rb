@@ -66,7 +66,7 @@ describe Spree::Comment do
 
     it "is not change approved date, unless approved is changed" do
       comment = create_comment(approved: true)
-      comment.update_attribute(:approved_on, Date.new(2011,1,1))
+      comment.update_attribute(:approved_on, Time.new(2011,1,1,13))
       comment.approved_on.to_date.should eql(Date.new(2011,1,1))
     end
 
@@ -83,7 +83,7 @@ describe Spree::Comment do
   end
 
   def create_comment(options={})
-    comment = Spree::Comment.new({ message: "nice post!", email: "test@home.com", url: "", name: "John" }.merge(options))
+    comment = Spree::Comment.new({ message: "nice post!", email: "test@home.com", url: "", name: "John" }.merge(options.except(:post_id, :user, :approved)))
     comment.post_id = options.key?(:post_id) ? options[:post_id] : 1
     comment.user = options[:user] if options.key?(:user)
     comment.approved = options[:approved] if options.key?(:approved)
